@@ -10,8 +10,8 @@ import sys
 import os
 import psycopg2
 
-from .models import Donation
 from validate_email import validate_email
+from .models import Donation
 
 # Get the current script's directory
 script_dir = os.path.dirname(__file__)

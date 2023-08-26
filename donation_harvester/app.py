@@ -12,7 +12,7 @@ from database import get_last_donation_time, \
 from stripeapi import StripeAPI
 from paypalapi import PaypalAPI
 from config import send_url_mail
-from config.utils import json_output
+from config.utils import json_output, generate_xml_file
 
 def main() -> None:
     """
@@ -26,14 +26,14 @@ def main() -> None:
         datefmt="%Y-%m-%d %H:%M:%S%z",
     )
     logging.getLogger().addHandler(logging.StreamHandler())
-    
+
     config = ConfigParser()
     config.read("config/config.ini", encoding="utf-8")
 
     paypal_client_id = config["harvester"]["paypal_client_id"]
     paypal_client_secret = config["harvester"]["paypal_client_secret"]
     stripe_api_key = config["harvester"]["stripe_api_key"]
-    
+
     # Parse arguments
     parser = argparse.ArgumentParser(description="Donation Update System.")
     subparsers = parser.add_subparsers(dest='command', required=True)
@@ -61,8 +61,10 @@ def main() -> None:
     list_parser.add_argument("--json", nargs='?', const='donations.json', \
         help="Outputs the results as a JSON file. You can optionally specify the output file name.")
     list_parser.add_argument("--total-only", action="store_true", help="Print only the total donation amount.")
-
     send_parser = subparsers.add_parser('send-deferred-emails', help="Send deferred emails.")
+    xml_parser = subparsers.add_parser('export-xml', help="Exports donations to an XML file.")
+    xml_parser.add_argument("--year", type=int, help="Filter donations by specified year.")
+    xml_parser.add_argument("--file-name", type=str, default="donations.xml", help="Specify the XML output file name.")
 
 
     args = parser.parse_args()
@@ -158,7 +160,18 @@ def main() -> None:
             if input() == "y":
                 delete_deferred_emails()
                 sendmail(donations)
-     # If runned without required arguments
+
+    elif args.command == "export-xml":
+        if args.year:
+            start_date = datetime(args.year, 1, 1).timestamp()
+            end_date = datetime(args.year, 12, 31).timestamp()
+        else:
+            start_date = 1600000000
+            end_date = datetime.now().timestamp()
+        donations = get_donations_in_range(start_date, end_date, None)
+        generate_xml_file(donations, args.file_name)
+        logging.info(f"Exported {len(donations)} donations to {args.file_name}.")
+    # If runned without required arguments
     else:
         logging.info("No required arguments provided, program is exiting.")
 

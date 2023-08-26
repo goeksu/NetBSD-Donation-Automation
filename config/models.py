@@ -43,19 +43,21 @@ class Donation:
         )
 
 def list_to_donation(donation_arr: list[str]) -> Donation:
-        return Donation(
-            confirmation_number=donation_arr[0],
-            donor_name=donation_arr[1],
-            currency=donation_arr[2],
-            quantity=donation_arr[3],
-            email=donation_arr[4],
-            vendor=donation_arr[5],
-            date_time=donation_arr[6],
-            amount=donation_arr[7],
-            access_token=donation_arr[8],
-        )
-        
+    """List to donation object."""
+    return Donation(
+        confirmation_number=donation_arr[0],
+        donor_name=donation_arr[1],
+        currency=donation_arr[2],
+        quantity=donation_arr[3],
+        email=donation_arr[4],
+        vendor=donation_arr[5],
+        date_time=donation_arr[6],
+        amount=donation_arr[7],
+        access_token=donation_arr[8],
+    )
+
 def dict_to_donation(data: dict[str, str]) -> Donation:
+    """Dict to donation object."""
     return Donation(
         donor_name=data.get('donor_name'),
         amount=data.get('amount'),
