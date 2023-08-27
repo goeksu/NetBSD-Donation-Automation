@@ -8,7 +8,7 @@ from typing import List, Dict
 from database import get_last_donation_time, \
     get_donations_in_range, insert_donation, \
     get_deferred_emails, delete_deferred_emails, \
-    insert_deferred_email
+    insert_deferred_email, get_feedbacks_this_year
 from stripeapi import StripeAPI
 from paypalapi import PaypalAPI
 from config import send_url_mail
@@ -64,7 +64,7 @@ def main() -> None:
     send_parser = subparsers.add_parser('send-deferred-emails', help="Send deferred emails.")
     xml_parser = subparsers.add_parser('export-xml', help="Exports donations to an XML file.")
     xml_parser.add_argument("--year", type=int, help="Filter donations by specified year.")
-    xml_parser.add_argument("--file-name", type=str, default="donations.xml", help="Specify the XML output file name.")
+    xml_parser.add_argument("--file-name", type=str, default="donors.xml", help="Specify the XML output file name.")
 
 
     args = parser.parse_args()
@@ -162,15 +162,11 @@ def main() -> None:
                 sendmail(donations)
 
     elif args.command == "export-xml":
-        if args.year:
-            start_date = datetime(args.year, 1, 1).timestamp()
-            end_date = datetime(args.year, 12, 31).timestamp()
-        else:
-            start_date = 1600000000
-            end_date = datetime.now().timestamp()
-        donations = get_donations_in_range(start_date, end_date, None)
-        generate_xml_file(donations, args.file_name)
-        logging.info(f"Exported {len(donations)} donations to {args.file_name}.")
+        year = args.year if args.year else datetime.now().year
+       
+        feedbacks = get_feedbacks_this_year(year)
+        generate_xml_file(feedbacks, args.file_name)
+        
     # If runned without required arguments
     else:
         logging.info("No required arguments provided, program is exiting.")

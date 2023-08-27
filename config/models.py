@@ -69,3 +69,40 @@ def dict_to_donation(data: dict[str, str]) -> Donation:
         access_token=data.get('access_token'),
         quantity=data.get('quantity', 1),
     )
+
+class Feedback:
+    """This class represents a feedback."""
+
+    def __init__(
+        self,
+        confirmation_number: int,
+        answer1: bool,
+        name: str,
+        answer2: bool,
+        email: str,
+        answer3: bool,
+        notification_email=str,
+        logo_filepath=str,
+    ) -> None:
+        self.confirmation_number = confirmation_number
+        self.answer1 = answer1
+        self.name = name
+        self.answer2 = answer2
+        self.email = email
+        self.answer3 = answer3
+        self.notification_email = notification_email
+        self.logo_filepath = logo_filepath
+       
+    def print_feedback(self) -> None:
+        """Print donation details."""
+        print(
+            f" confirmation_number: {self.confirmation_number}\n",
+            f"answer1: {self.answer1}\n",
+            f"name: {self.name}\n",
+            f"answer2: {self.answer2}\n",
+            f"email: {email}\n",
+            f"answer3: {self.answer3}\n",
+            f"notification_email: {self.notification_email}\n",
+            f"logo_filepath: {self.logo_filepath}\n",
+            "----------------------------------------"
+        )

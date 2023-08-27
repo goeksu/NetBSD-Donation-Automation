@@ -5,7 +5,7 @@ and insert donation details into the database.
 import logging
 import psycopg2
 from config import (get_db_connection, PREFIX)
-from config.models import Donation
+from config.models import Donation, Feedback
 
 
 # SQL Query to insert donation_details into the database
@@ -58,6 +58,16 @@ WHERE confirmation_no IN (
 DELETE_DEFERRED_EMAIL = f"""
 DELETE FROM {PREFIX}.deferred_email
 """
+
+
+GET_FEEDBACKS_THIS_YEAR=f"""
+    SELECT i.confirmation_no, i.answer1, i.name, i.answer2, i.email, i.answer3, i.notification_email, i.logo_filepath
+    FROM {PREFIX}.interaction AS i
+    INNER JOIN {PREFIX}.information AS inf 
+    ON i.confirmation_no = inf.confirmation_no 
+    WHERE EXTRACT(YEAR FROM TO_TIMESTAMP(inf.datetime)) = %s;
+"""
+
 
 
 def get_last_donation_time() -> list[Donation]:
@@ -174,6 +184,44 @@ def get_donations_in_range(begin_date: int, end_date: int, vendor: str) -> list[
             donations.append(donation)
         logging.info(f"Successfully fetched {len(donations)} donations from database.")
         return donations
+
+    except psycopg2.Error as error:
+        logging.exception(f"Error while executing query: {error}")
+        return []
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+            
+def get_feedbacks_this_year(year: int) -> list[Feedback]:
+    """Query the database for donations within a date range."""
+    conn = get_db_connection()
+    
+    if conn is None:
+        logging.warning("Failed to establish database connection.")
+        return []
+
+    conn.autocommit = True
+    feedbacks = []
+    try:
+        cur = conn.cursor()
+        cur.execute(GET_FEEDBACKS_THIS_YEAR, (year,))
+        rows = cur.fetchall()
+        for row in rows:
+            feedback = Feedback(
+                confirmation_number=row[0],
+                answer1=row[1],
+                name=row[2],
+                answer2=row[3],
+                email=row[4],
+                answer3=row[5],
+                notification_email=row[6],
+                logo_filepath=row[7],
+            )
+            feedbacks.append(feedback)
+        logging.info(f"Successfully fetched {len(feedbacks)} feedbacks from database.")
+        return feedbacks
 
     except psycopg2.Error as error:
         logging.exception(f"Error while executing query: {error}")

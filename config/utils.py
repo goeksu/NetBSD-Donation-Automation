@@ -8,20 +8,20 @@ import xml.etree.ElementTree as ET
 # Set up allowed file extensions for logo
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-def generate_xml_file(donations, filename) -> None:
-    """Generate an XML file with the provided donations"""
-    root = ET.Element("Donations")
-    for donation in donations:
-        donation_element = ET.SubElement(root, "Donation")
-        donation_element.set("confirmation_number", str(donation.confirmation_number))
-        donation_element.set("donor_name", donation.donor_name)
-        donation_element.set("amount", str(donation.amount))
-        donation_element.set("currency", donation.currency)
-        donation_element.set("quantity", str(donation.quantity))
-        donation_element.set("email", donation.email)
-        donation_element.set("vendor", donation.vendor)
-        donation_element.set("date_time", str(datetime.fromtimestamp(donation.date_time)))
-        donation_element.set("token", str(donation.access_token))
+def generate_xml_file(feedbacks, filename) -> None:
+    """Generate an XML file with the provided feedbacks"""
+    root = ET.Element("Feedbacks")
+    i = 0
+    for feedback in feedbacks:
+        if feedback.answer1:
+            i += 1
+            feedback_element = ET.SubElement(root, "Feedback")
+            feedback_element.set("name", str(feedback.name))
+            if feedback.answer2:
+                feedback_element.set("email", str(feedback.email))
+            if feedback.logo_filepath != "Empty":
+                feedback_element.set("logo_filepath", str(feedback.logo_filepath))
+    logging.info(f"Exported {i} feedbacks to {filename} aligning to response")    
     tree = ET.ElementTree(root)
     tree.write(filename)
 
