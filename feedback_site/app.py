@@ -7,7 +7,6 @@ from threading import Thread
 from flask import Flask, render_template, request, session
 from flask_talisman import Talisman
 
-
 from config import send_thank_mail
 
 from config.utils import valid_uuid, check_length
@@ -60,17 +59,17 @@ def index() -> str:
     """Render the index page."""
     return render_template("index.html")
 
-
+"""
 @app.route("/donations")
 def donations() -> str:
-    """Render the index page."""
+    \"""Render the index page.\"""
     this_year = datetime.datetime.now().year
     return render_template(
         "donations.html",
         year=this_year,
         donors=FeedbackSQL.get_all_by_year(str(this_year)),
     )
-
+"""
 
 @app.route("/validate", methods=["POST"])
 def validate() -> str:
@@ -134,7 +133,7 @@ def feedback_by_mail() -> str:
 def store(token) -> str:
     """Store feedback responses and handle optional notification email."""
 
-    donation = dict_to_donation(session["donation"])
+    donation = dict_to_donation(session['donation'])
 
     feedback_responses = {
         "confirmation_no": int(donation.confirmation_number),
@@ -174,7 +173,7 @@ def store(token) -> str:
             feedback_responses["logo_filepath"] = path
         else:
             logging.info("No file received")
-            feedback_responses["logo_filepath"] = "Empty"
+            feedback_responses["logo_filepath"] = "None"
 
     logging.info(f"Got feedback {donation.confirmation_number}")
     FeedbackSQL.insert(feedback_responses)

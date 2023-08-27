@@ -24,12 +24,12 @@ FRONT_PAGE_IMAGE_SIZE_X = 150
 FRONT_PAGE_IMAGE_SIZE_Y = 150
 
 
-def allowed_file(filename) -> bool:
+def allowed_file(filename: str) -> bool:
     """this function checks if the file extension is allowed"""
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def check_size(file) -> bool:
+def check_size(file: any) -> bool:
     """Checks size of file"""
     file.seek(0, os.SEEK_END)
     file_length = file.tell()
@@ -40,7 +40,7 @@ def check_size(file) -> bool:
     file.seek(0, 0)  # Reset file pointer
     return True
 
-def calculate_dimensions(max_height, max_width, aspect_ratio) -> tuple:
+def calculate_dimensions(max_height: float, max_width: float, aspect_ratio: float) -> tuple:
     """Calculates the dimensions of the image based on the aspect ratio and the max height and width"""
     if aspect_ratio * max_height <= max_width:
         return max_height, int(max_height * aspect_ratio)
@@ -54,7 +54,7 @@ def prepare_file() -> None:
         os.makedirs("static")
 
 
-def save_file(filename, img) -> str:
+def save_file(filename: str, img: Image) -> str:
     """"Save the file to the static folder"""
     path = f"static/{filename}"
     logging.info(f"Saving file: {path}")
@@ -62,7 +62,7 @@ def save_file(filename, img) -> str:
     return path
 
 
-def process_file(file, donation) -> str:
+def process_file(file: any, donation: Donation) -> str:
     """this function processes the file and returns the path to the file"""
     if not file\
         or not allowed_file(file.filename)\

@@ -8,18 +8,18 @@ import xml.etree.ElementTree as ET
 # Set up allowed file extensions for logo
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-def generate_xml_file(feedbacks, filename) -> None:
+def generate_xml_file(feedbacks: list, filename: str) -> None:
     """Generate an XML file with the provided feedbacks"""
-    root = ET.Element("Feedbacks")
+    root = ET.Element("donations")
     i = 0
     for feedback in feedbacks:
         if feedback.answer1:
             i += 1
-            feedback_element = ET.SubElement(root, "Feedback")
+            feedback_element = ET.SubElement(root, "donor")
             feedback_element.set("name", str(feedback.name))
             if feedback.answer2:
                 feedback_element.set("email", str(feedback.email))
-            if feedback.logo_filepath != "Empty":
+            if str(feedback.logo_filepath) != "None":
                 feedback_element.set("logo_filepath", str(feedback.logo_filepath))
     logging.info(f"Exported {i} feedbacks to {filename} aligning to response")    
     tree = ET.ElementTree(root)
@@ -33,7 +33,7 @@ def generate_access_token() -> str:
     """Generate a random UUID"""
     return str(uuid.uuid4())
 
-def json_output(donations, filename: str='donations.json') -> None:
+def json_output(donations: list, filename: str='donations.json') -> None:
     """Output results as a JSON file"""
     with open(filename, 'w') as f:
         json.dump(
