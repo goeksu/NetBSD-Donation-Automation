@@ -171,7 +171,7 @@ def main() -> None:
     else:
         logging.info("No required arguments provided, program is exiting.")
 
-def sendmail(donations) -> None:
+def sendmail(donations: list) -> None:
     """
     This function send mails to the donors, and insert the failed ones into the database.
     """

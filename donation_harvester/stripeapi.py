@@ -61,7 +61,7 @@ class StripeAPI:
             )
             return {"name": "Error", "email": "Error"}
 
-    def _charge_to_donation(self, charge, customer) -> Donation:
+    def _charge_to_donation(self, charge: stripe.Charge, customer: stripe.Customer) -> Donation:
         """
         Converts a Stripe charge and customer into a Donation object.
         Uses UTC.
