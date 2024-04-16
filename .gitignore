@@ -21,7 +21,7 @@ build/
 .cache/
 .pytest_cache/
 .idea/
-docs/_build/
+
 .vscode
 
 # Coverage reports
