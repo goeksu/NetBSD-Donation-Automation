@@ -32,23 +32,6 @@ Before you begin, you will need:
 
 Ensure that Python, pip, and PostgreSQL are installed and properly configured on your system.
 
-### 1. Python & pip
-
-Check if Python and pip are installed by running:
-```bash
-    python3 --version
-    pip3 --version
-```
-If these commands fail, you need to install Python and pip. Visit [Python's website](https://www.python.org/) for installation instructions.
-
-### 2. PostgreSQL
-
-Install PostgreSQL if it is not installed. Refer to the [PostgreSQL documentation](https://www.postgresql.org/download/) for detailed installation instructions specific to your operating system.
-
-### 3. Git
-
-If you do not have Git installed, download it from [Git Downloads](https://git-scm.com/downloads).
-
 ## Cloning the Repository
 
 Clone the repository to get the source code on your machine:
