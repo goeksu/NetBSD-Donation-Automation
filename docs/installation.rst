@@ -1,26 +1,12 @@
+.. _installation:
 
-![NetBSD.](http://netbsd.org/images/NetBSD-smaller-tb.png)
-**Welcome to NetBSD Donation Automation's documentation!**
-
-# Overview
-
-This documentation covers the NetBSD Donation Automation system, designed to streamline the process of receiving and managing donations via Stripe and PayPal, and engaging donors through a feedback mechanism.
-
-The system consists of two main components:
-
-**Donation Harvester CLI app:**
-
-Fetches new donations from payment platforms, stores them in a PostgreSQL database, and notifies donors with an email containing a feedback link and login credentials.
-
-**Feedback Site:**
-
-Provides a web interface for donors to submit feedback about their donation experience and consent to being listed on a public contributors' page.
-
-# Installation
+Installation
+============
 
 This section guides you through the installation process for the NetBSD Donation Automation system, specifically focusing on setting up the Feedback Site, which is a Flask-based web application. Ensure you have administrative access and the necessary permissions to install the software components described below.
 
-## Prerequisites
+Prerequisites
+-------------
 
 Before you begin, you will need:
 
@@ -32,78 +18,98 @@ Before you begin, you will need:
 
 Ensure that Python, pip, and PostgreSQL are installed and properly configured on your system.
 
-### 1. Python & pip
+1. **Python & pip**:
+   Check if Python and pip are installed by running:
 
-Check if Python and pip are installed by running:
-```bash
-    python3 --version
-    pip3 --version
-```
-If these commands fail, you need to install Python and pip. Visit [Python's website](https://www.python.org/) for installation instructions.
+   .. code-block:: bash
 
-### 2. PostgreSQL
+       python3 --version
+       pip3 --version
 
-Install PostgreSQL if it is not installed. Refer to the [PostgreSQL documentation](https://www.postgresql.org/download/) for detailed installation instructions specific to your operating system.
+   If these commands fail, you need to install Python and pip. Visit https://www.python.org/ for installation instructions.
 
-### 3. Git
+2. **PostgreSQL**:
+   Install PostgreSQL if it is not installed. Refer to the PostgreSQL documentation at https://www.postgresql.org/download/ for detailed installation instructions specific to your operating system.
 
-If you do not have Git installed, download it from [Git Downloads](https://git-scm.com/downloads).
+3. **Git**:
+   If you do not have Git installed, download it from https://git-scm.com/downloads.
 
-## Cloning the Repository
+Cloning the Repository
+----------------------
 
 Clone the repository to get the source code on your machine:
-```bash
+
+.. code-block:: bash
+
     git clone https://github.com/goeksu/NetBSD-Donation-Automation.git
-```
+
 Navigate to the project directory:
-```bash
+
+.. code-block:: bash
+
     cd NetBSD-Donation-Automation
-```
-## Setting Up the Database
+
+Setting Up the Database
+-----------------------
 
 Set up the PostgreSQL database using the provided script:
-```bash
+
+.. code-block:: bash
+
     cd config
     ./set_db.sh -c
-```
+
 This script initializes the database schema and sets the required permissions.
 
-## Setting Up the Virtual Environment
+Setting Up the Virtual Environment
+----------------------------------
 
 It is recommended to use a virtual environment to isolate package dependencies. To set up and activate a virtual environment:
-```bash
+
+.. code-block:: bash
+
     python3 -m venv venv
     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-```
-## Installing Python Dependencies
+
+Installing Python Dependencies
+------------------------------
 
 Install the necessary Python packages using pip:
-```bash
-    pip3 install -r requirements.txt
-```
-## Setting the API keys and secrets
 
+.. code-block:: bash
+
+    pip3 install -r requirements.txt
+
+Setting the API keys and secrets
+---------------------------------
 Change your API keys and secrets in the `config/config.py` file. You can find the keys and secrets in your PayPal and Stripe accounts.
 
-```bash
-secret_key = ANY_RANDOM_STRING
+.. code-block:: bash
 
-paypal_client_id = YOUR_PAYPAL_CLIENT_ID
-paypal_client_secret = YOUR_PAYPAL_CLIENT_SECRET
+    secret_key = ANY_RANDOM_STRING
 
-stripe_api_key = YOUR_STRIPE_API_KEY
-```
+    paypal_client_id = YOUR_PAYPAL_CLIENT_ID
+    paypal_client_secret = YOUR_PAYPAL_CLIENT_SECRET
 
-## Starting the Feedback Site
+    stripe_api_key = YOUR_STRIPE_API_KEY
+
+Starting the Feedback Site
+--------------------------
 
 Ensure you are in the root directory of the `feedback_site` module, then run:
-```python
+
+.. code-block:: bash
+
     export FLASK_APP=feedback_site
     export FLASK_ENV=development  # Use 'production' as appropriate
     flask run
-```
+
 This command will start the Flask application on the default port (5000). Open a web browser and navigate to `http://127.0.0.1:5000/` to view the application.
 
-## Next Steps
+Next Steps
+----------
 
 After installation, you may want to configure the system settings or customize the application to better fit your needs. Refer to the `config_module` and `feedback_site` documentation for detailed information on configurations and customizations.
+
+
+
