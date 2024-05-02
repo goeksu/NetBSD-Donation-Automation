@@ -31,7 +31,7 @@ config = ConfigParser()
 config.read("config/config.ini", encoding="utf-8")
 
 # Set up session
-app.secret_key = config["website"]["secret_key"] 
+app.secret_key = config["website"]["secret_key"]
 app.config.update(
     SESSION_COOKIE_SAMESITE='Strict'
 )
@@ -76,7 +76,7 @@ def validate() -> str:
     """Validate the provided feedback ID and email."""
     feedback_id = request.form.get("feed")
     email = request.form.get("email")
-    
+
     if not check_length(feedback_id) or not check_length(email):
         logging.info(f"Invalid length: {email} - {feedback_id}")
         return render_template("index.html",error= -1)
@@ -145,7 +145,7 @@ def store(token) -> str:
         "notification_email": request.form.get("notification_email", "-"),
         "logo_filepath": request.form.get("logo", None),
     }
-    
+
     for key, value in feedback_responses.items():
         if key.endswith("confirmation_no") or not value:
             continue
@@ -164,7 +164,7 @@ def store(token) -> str:
         if file:
             logging.info(f"Received file: {file.filename}")
             path = process_file(file, donation)
-            if path == 429: # File too large
+            if path == 429: # File too large error code.
                 logging.error("Error related to image attached")
                 return render_template("valid.html",
                                        fid=donation.access_token,

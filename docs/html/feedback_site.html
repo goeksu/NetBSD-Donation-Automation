@@ -86,17 +86,10 @@
              
   <section id="feedback-site">
 <h1>feedback_site<a class="headerlink" href="#feedback-site" title="Link to this heading"></a></h1>
-<p>The Feedback Site module handles the collection and processing of feedback from donors. It provides interfaces for entering feedback, validating donation information, and submitting responses to the system.</p>
+<p>The Feedback Site module handles the collection and processing of feedback from donors. It provides interfaces for entering feedback, validating donation information, and submitting responses to the system.
+Site is running by Flask.</p>
 <section id="app-py">
 <h2>app.py<a class="headerlink" href="#app-py" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;app.py is the main entry point for the feedback site.&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span>
-<span class="kn">from</span> <span class="nn">flask_talisman</span> <span class="kn">import</span> <span class="n">Talisman</span>
-
-<span class="c1"># Flask application setup and routes...</span>
-</pre></div>
-</div>
 <p>This file sets up the Flask application and defines routes for handling user interactions. Key functions include:</p>
 <ul class="simple">
 <li><p><strong>index:</strong> Renders the main page of the feedback site.</p></li>
@@ -104,18 +97,23 @@
 <li><p><strong>feedback_by_mail:</strong> Handles feedback provided via links in emails.</p></li>
 <li><p><strong>store:</strong> Stores the feedback into the database and handles file uploads if necessary.</p></li>
 </ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">csp</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;default-src&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">self</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="s1">&#39;script-src&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">self</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="s1">&#39;style-src&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">self</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+<span class="p">}</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">Talisman</span><span class="p">(</span><span class="n">app</span><span class="p">,</span>
+    <span class="n">content_security_policy</span><span class="o">=</span><span class="n">csp</span><span class="p">,</span>
+    <span class="n">content_security_policy_nonce_in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;script-src&#39;</span><span class="p">],</span>
+    <span class="n">force_https</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># TODO for development only</span>
+</pre></div>
+</div>
 <p>Security settings such as Content Security Policy (CSP) are applied using Flask-Talisman.</p>
 </section>
 <section id="database-py">
 <h2>database.py<a class="headerlink" href="#database-py" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;database.py is the database layer for the feedback site.&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">psycopg2</span>
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">get_db_connection</span>
-
-<span class="c1"># Database query execution...</span>
-</pre></div>
-</div>
 <p>This script contains functions for interacting with the database. It utilizes a central function <cite>execute_query</cite> to perform SQL operations, ensuring that database interactions are handled efficiently and securely.</p>
 </section>
 <section id="files-py">
@@ -137,14 +135,56 @@
 <p>Key Classes:</p>
 <ul class="simple">
 <li><p><strong>DonationSQL:</strong> Manages SQL queries related to donation records.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">SQL_CHECK_EXISTS_BY_EMAIL_AND_CONFIRMATION</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">PREPARE get_donations (text, int) AS</span>
+<span class="s2">SELECT *</span>
+<span class="s2">FROM </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.information d</span>
+<span class="s2">WHERE d.email = $1 AND d.confirmation_no = $2;</span>
+<span class="s2">EXECUTE get_donations(%s, %s);</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">SQL_EXISTS_BY_TOKEN</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">PREPARE get_donations_by_token (text) AS</span>
+<span class="s2">SELECT *</span>
+<span class="s2">FROM </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.information</span>
+<span class="s2">WHERE uuid = $1;</span>
+<span class="s2">EXECUTE get_donations_by_token(%s);</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
 <li><p><strong>FeedbackSQL:</strong> Handles SQL queries for feedback interactions.</p></li>
 </ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">SQL_CHECK_EXISTS_BY_CONFIRMATION</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">PREPARE check_feedback (int) AS</span>
+<span class="s2">SELECT EXISTS(SELECT 1 FROM </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.interaction WHERE confirmation_no = $1);</span>
+<span class="s2">EXECUTE check_feedback(%s);</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">SQL_INSERT_FEEDBACK</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">PREPARE insert_feedback (int, bool, text, bool, text, bool, text, text) AS</span>
+<span class="s2">INSERT INTO </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.interaction VALUES($1, $2, $3, $4, $5, $6, $7, $8);</span>
+<span class="s2">EXECUTE insert_feedback(%s, %s, %s, %s, %s, %s, %s, %s);</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">SQL_GET_DONORS_THIS_YEAR</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT i.name,i.logo_filepath,</span>
+<span class="s2">    CASE WHEN i.answer2 THEN i.email ELSE NULL END</span>
+<span class="s2">FROM </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.interaction AS i</span>
+<span class="s2">INNER JOIN </span><span class="si">{</span><span class="n">PREFIX</span><span class="si">}</span><span class="s2">.information AS inf</span>
+<span class="s2">ON i.confirmation_no = inf.confirmation_no</span>
+<span class="s2">WHERE i.answer1 = TRUE</span>
+<span class="s2">    AND EXTRACT(YEAR FROM TO_TIMESTAMP(inf.datetime)) = %s;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
 <p>Each script is crucial for the operations of the feedback site, ensuring that donor feedback is collected securely and efficiently, maintaining privacy and data integrity.</p>
 </section>
 <section id="files">
 <h2>Files<a class="headerlink" href="#files" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Templates:</strong> Contains HTML templates for the feedback site.</p></li>
+<li><p><strong>Templates:</strong> Contains HTML templates for the feedback site. Uses Bootstrap 5.2.3.</p></li>
 <li><p><strong>Static:</strong> Includes CSS and JavaScript files for styling and interactivity.</p></li>
 </ul>
 </section>
@@ -153,10 +193,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="donation_harvester.html" class="btn btn-neutral float-left" title="donation_harvester" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="config.html" class="btn btn-neutral float-right" title="config" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
@@ -164,9 +201,6 @@
     <p>&#169; Copyright NetBSD 2024.</p>
   </div>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

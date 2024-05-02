@@ -88,55 +88,65 @@
 <p>This module is responsible for managing all configurations related to databases and email services, and includes utilities for handling various tasks across the project. Below are detailed descriptions of each file and its functionalities.</p>
 <section id="init-py">
 <h2>__init__.py<a class="headerlink" href="#init-py" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Database and email configuration.&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">smtplib</span>
-<span class="kn">import</span> <span class="nn">ssl</span>
-<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">psycopg2</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Donation</span>
-<span class="kn">from</span> <span class="nn">validate_email</span> <span class="kn">import</span> <span class="n">validate_email</span>
-
-<span class="c1"># Initialization and configuration setup...</span>
-</pre></div>
-</div>
 <p>This file handles the initialization of email and database configurations. It reads from the configuration files to set up SMTP for sending emails and establishes database connections.</p>
-<p>Key Functions:n
-- <cite>get_db_connection</cite>: Establishes ¬ database connection using psycopg2.n
-- <cite>get_server</cite>: Configures and returns an SMTP server instance for sending emails.n
-- <cite>send_url_mail</cite>: Prepares and sends an email containing the URL to the donation page.n
-- <cite>send_thank_mail</cite>: Sends a thank you email to a recipient.</p>
+<p>Key Functions:</p>
+<ul class="simple">
+<li><p><cite>get_db_connection</cite>: Establishes database connection using psycopg2.</p></li>
+<li><p><cite>get_server</cite>: Configures and returns an SMTP server instance for sending emails.</p></li>
+<li><p><cite>send_url_mail</cite>: Prepares and sends an email containing the URL to the donation page.</p></li>
+<li><p><cite>send_thank_mail</cite>: Sends a thank you email to a recipient.</p></li>
+</ul>
 </section>
 <section id="models-py">
 <h2>models.py<a class="headerlink" href="#models-py" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;This file contains the Donation class and Feedback class.&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">utils</span>
-
-<span class="k">class</span> <span class="nc">Donation</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Donation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a donation.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">donor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">date_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">vendor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">confirmation_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">access_token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">quantity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Constructor and methods...</span>
+    <span class="k">def</span> <span class="nf">print_donation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">list_to_donation</span><span class="p">(</span><span class="n">donation_arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Donation</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">dict_to_donation</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Donation</span><span class="p">:</span>
+
+
 
 <span class="k">class</span> <span class="nc">Feedback</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a feedback received from donors.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">confirmation_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">answer1</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">answer2</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">answer3</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">notification_email</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">logo_filepath</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Constructor and methods...</span>
+    <span class="k">def</span> <span class="nf">print_feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </pre></div>
 </div>
 <p>This file defines the data models for donations and feedbacks. The <cite>Donation</cite> class encapsulates all attributes related to a donation, and the <cite>Feedback</cite> class deals with responses received from donors.</p>
 </section>
 <section id="utils-py">
 <h2>utils.py<a class="headerlink" href="#utils-py" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;This module provides utility functions for the application.&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
-
-<span class="c1"># Utility functions...</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_xml_file</span><span class="p">(</span><span class="n">feedbacks</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">generate_confirmation_number</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">generate_access_token</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">json_output</span><span class="p">(</span><span class="n">donations</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;donations.json&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">check_length</span><span class="p">(</span><span class="n">string</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">valid_uuid</span><span class="p">(</span><span class="n">uuid_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </pre></div>
 </div>
 <p>This file contains utility functions that are used across various modules. Functions include generating XML files, confirming numbers, access tokens, and handling JSON outputs that used by both <em>donation_harvester</em> and <em>feedback_site</em>.</p>
@@ -157,9 +167,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="feedback_site.html" class="btn btn-neutral float-left" title="feedback_site" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
+          <footer>
 
   <hr/>
 
@@ -167,9 +175,6 @@
     <p>&#169; Copyright NetBSD 2024.</p>
   </div>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>
